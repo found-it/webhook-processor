@@ -39,7 +39,6 @@ func authorized(w http.ResponseWriter, r *http.Request) bool {
  * Process the webhook and log out the payload
  */
 func handleWebhook(w http.ResponseWriter, r *http.Request) {
-
 	if authorized(w, r) {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
