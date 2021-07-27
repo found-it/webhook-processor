@@ -5,7 +5,7 @@ A server that accepts POST and then a k8s manifest so you can deploy it in-clust
 Just clone this repoistory, set the appropriate values in the values.yaml and install in your cluster.
 
 ```
-helm install webhook --namespace webhook --values values.yaml --create-namespace ./chart/
+helm upgrade --install webhook --namespace webhook --values values.yaml --create-namespace ./chart/
 ```
 
 ### Configuring Anchore
