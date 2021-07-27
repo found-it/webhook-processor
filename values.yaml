@@ -1,0 +1,6 @@
+secret:
+  username: admin
+  password: foobar
+
+deployment: {}
+#   image: jpetersenames/webhook_processor:0.0.1

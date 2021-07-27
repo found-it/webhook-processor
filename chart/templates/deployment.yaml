@@ -1,0 +1,23 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook-processor
+  template:
+    metadata:
+      labels:
+        app: webhook-processor
+    spec:
+      containers:
+      - name: webhook-processor
+        image: {{ .Values.deployment.image | default "jpetersenames/webhook_processor:0.0.1" }}
+        ports:
+        - containerPort: 9000
+        envFrom:
+        - secretRef:
+            name: webhook-creds

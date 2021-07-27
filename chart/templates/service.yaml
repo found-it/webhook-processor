@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webhook-processor
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9000
+  selector:
+    app: webhook-processor
