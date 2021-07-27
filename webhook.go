@@ -14,13 +14,8 @@ var logging = logrus.New()
 var log = logging.WithFields(logrus.Fields{"server": "0.0.0.0:9000"})
 
 /*
- *  [ Handler ] Home landing page
+ * Determine whether the request is authorized
  */
-func homeLink(w http.ResponseWriter, r *http.Request) {
-	log.Info("Hit home")
-	fmt.Fprintf(w, "Welcome to webhook server!")
-}
-
 func authorized(w http.ResponseWriter, r *http.Request) bool {
 	if u, p, ok := r.BasicAuth(); ok {
 		if u == os.Getenv("WEBHOOK_USERNAME") && p == os.Getenv("WEBHOOK_PASSWORD") {
@@ -41,9 +36,9 @@ func authorized(w http.ResponseWriter, r *http.Request) bool {
 }
 
 /*
-
+ * Process the webhook and log out the payload
  */
-func processor(w http.ResponseWriter, r *http.Request) {
+func handleWebhook(w http.ResponseWriter, r *http.Request) {
 
 	if authorized(w, r) {
 		body, err := ioutil.ReadAll(r.Body)
@@ -62,8 +57,13 @@ func processor(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
- *  Use Gorilla Mux to handle routes
+ * Home landing page
  */
+func handleHome(w http.ResponseWriter, r *http.Request) {
+	log.Info("Hit home")
+	fmt.Fprintf(w, "Welcome to webhook server!")
+}
+
 func main() {
 	if _, ok := os.LookupEnv("WEBHOOK_USERNAME"); !ok {
 		log.Fatal("Could not find WEBHOOK_USERNAME in environment")
@@ -74,7 +74,7 @@ func main() {
 	}
 
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", homeLink)
-	router.HandleFunc("/v1/webhook", processor).Methods("POST")
+	router.HandleFunc("/", handleHome)
+	router.HandleFunc("/v1/webhook", handleWebhook).Methods("POST")
 	log.Fatal(http.ListenAndServe(":9000", router))
 }
