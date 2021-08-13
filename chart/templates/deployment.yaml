@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
       - name: webhook-processor
-        image: {{ .Values.deployment.image | default "jpetersenames/webhook_processor:0.0.1" }}
+        image: {{ .Values.deployment.image | default "jpetersenames/webhook_processor:0.0.2" }}
+        imagePullPolicy: Always
         ports:
         - containerPort: 9000
         envFrom:

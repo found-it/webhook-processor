@@ -38,7 +38,7 @@ func authorized(w http.ResponseWriter, r *http.Request) bool {
 /*
  * Process the webhook and log out the payload
  */
-func handleWebhook(w http.ResponseWriter, r *http.Request) {
+func handler(w http.ResponseWriter, r *http.Request, ntype string) {
 	if authorized(w, r) {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -46,13 +46,28 @@ func handleWebhook(w http.ResponseWriter, r *http.Request) {
 		}
 
 		log.WithFields(logrus.Fields{
-			"url": r.URL,
-		}).Info("Received!")
+			"url":    r.URL,
+			"remote": r.RemoteAddr,
+		}).Infof("Received %s\n", ntype)
 
 		log.Info(string(body))
 
 		w.WriteHeader(http.StatusOK)
 	}
+}
+
+/*
+ * Process the webhook and log out the payload
+ */
+func handleGeneral(w http.ResponseWriter, r *http.Request) {
+	handler(w, r, "general")
+}
+
+/*
+ * Process the webhook and log out the payload
+ */
+func handleVulnUpdate(w http.ResponseWriter, r *http.Request) {
+	handler(w, r, "vuln_update")
 }
 
 /*
@@ -74,6 +89,7 @@ func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", handleHome)
-	router.HandleFunc("/v1/webhook", handleWebhook).Methods("POST")
+	router.HandleFunc("/v1/general", handleGeneral).Methods("POST")
+	router.HandleFunc("/v1/vuln_update", handleVulnUpdate).Methods("POST")
 	log.Fatal(http.ListenAndServe(":9000", router))
 }

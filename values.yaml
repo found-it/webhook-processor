@@ -2,5 +2,5 @@ secret:
   username: webhook_user
   password: foobar!
 
-deployment: {}
-#   image: jpetersenames/webhook_processor:0.0.1
+deployment:
+  image: jpetersenames/webhook_processor:0.0.2
